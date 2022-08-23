@@ -15,7 +15,7 @@ class WireTransfer extends Actor with ActorLogging {
 
   import WireTransfer._
 
-  def receieve : Receive = {
+  def receive : Receive = {
 
     case Transfer(from, to, amount) => {
         from ! BankAccount.Withdraw(amount)
@@ -26,18 +26,22 @@ class WireTransfer extends Actor with ActorLogging {
   def waitForWithdrawal(to: ActorRef, amount: BigInt, sender: ActorRef) : Receive = {
 
     case Done(message) => {
+        println(message)
         to ! BankAccount.Deposit(amount)
-        context.become(waitForDeposit(amount,sender))
+        context.become(waitForDeposit(sender))
     }
     case Failed(message) => {
+        println(message)
         sender ! BankAccount.Failed("message")
         context.stop(self)
     }
   }
 
-  def waitForDeposit(amount: BigInt, sender: ActorRef) : Receive = {
+  def waitForDeposit(sender: ActorRef) : Receive = {
     case Done(message) => {
-      sender ! Done
+      println(message)
+      sender ! Done("Successfully transfered")
+      context.stop(self)
     }
   }
 }
