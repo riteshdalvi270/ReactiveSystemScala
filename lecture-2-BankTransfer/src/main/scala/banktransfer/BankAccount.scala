@@ -24,8 +24,17 @@ class BankAccount extends Actor {
   def receive : Receive = {
 
     case Deposit(amount) => {
-      balance+=amount;
-      sender ! Done
+      balance+=amount
+      sender ! Done("balance updated")
+    }
+
+    case Withdraw(amount : BigInt) => {
+      balance-=amount
+      sender ! Done("balance withdrawn")
+    }
+
+    case _  => {
+      sender ! Failed(" Operation not supported")
     }
   }
 }
