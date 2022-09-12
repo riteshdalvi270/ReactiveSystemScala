@@ -23,7 +23,7 @@ class BankAccount extends Actor {
 
   def receive : Receive = {
 
-    case Deposit(amount) => {
+    case Deposit(amount: BigInt) => {
       balance+=amount
       sender ! Done("balance updated")
     }
